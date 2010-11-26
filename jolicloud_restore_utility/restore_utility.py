@@ -12,10 +12,11 @@ import datetime
 import pygtk
 pygtk.require('2.0')
 import gtk
+from gtk import glade
 
 from twisted.internet import protocol
 from twisted.internet import reactor, defer
-from twisted.python.util import println
+from twisted.python.util import println, sibpath
 from twisted.web.client import getPage
 
 import simplejson
@@ -23,7 +24,6 @@ import simplejson
 class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
     _current_task = 0
 
-    _tasks = None
     _default_tasks = [
             {
                 'task': 'clear_packages',
@@ -97,14 +97,14 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
             '/usr/bin/apt-get',
             ['apt-get', 'update'], {'DEBIAN_FRONTEND': 'noninteractive'}
         )
-    
+
     def _task_install(self, packages=[]):
         reactor.spawnProcess(
             self,
             '/usr/bin/apt-get',
             ['apt-get', '-f', 'install'] + packages, {'DEBIAN_FRONTEND': 'noninteractive'}
         )
-    
+
     def _task_reinstall(self, packages=[]):
         reactor.spawnProcess(
             self,
@@ -125,11 +125,6 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
 
     def run_next_task(self):
         if self._current_task < len(self._tasks):
-            print 'Executing task %d out of %d: %s' % (
-                self._current_task + 1,
-                len(self._tasks),
-                self._tasks[self._current_task]['description']
-            )
             if hasattr(self, '_task_%s' % self._tasks[self._current_task]['task']):
                 kwargs = {}
                 if self._tasks[self._current_task].has_key('args'):
@@ -142,28 +137,28 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
 
     def connectionMade(self):
         pass
-    
+
     def outReceived(self, data):
-        #print "[%s][stdout] %s" % (datetime.datetime.now(), data)
         pass
-    
+
     def errReceived(self, data):
-        #print "[%s][stderr] %s" % (datetime.datetime.now(), data)
         pass
-        
+
     def inConnectionLost(self):
         pass
-    
+
     def outConnectionLost(self):
         pass
-    
+
     def errConnectionLost(self):
         pass
-    
+
     def processEnded(self, status_object):
         self.run_next_task()
 
 class JolicloudRestoreUtilityText(JolicloudRestoreUtilityBase):
+    _hbox = None
+
     def __init__(self):
         self.start()
 
@@ -171,45 +166,60 @@ class JolicloudRestoreUtilityText(JolicloudRestoreUtilityBase):
         print 'Completed! You need to restart your computer.'
         reactor.stop()
 
-class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase, gtk.Window):
+    def run_next_task(self):
+        if self._current_task < len(self._tasks):
+            print 'Executing task %d out of %d: %s' % (
+                self._current_task + 1,
+                len(self._tasks),
+                self._tasks[self._current_task]['description']
+            )
+        JolicloudRestoreUtilityBase.run_next_task(self)
+
+class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase, gtk.glade.XML):
     def __init__(self):
-        gtk.Window.__init__(self)
-        
-        self.set_icon(self.render_icon(gtk.STOCK_PREFERENCES, gtk.ICON_SIZE_MENU))
-        self.connect('map-event', self._on_map_event)
-        self.connect('destroy', self._destroy_cb)
-        self._build_welcome_message()
-        self.show_all()
-    
-    def _destroy_cb(self, window):
-        self.destroy()
-        #gtk.main_quit()
+        self.glade = glade.XML(sibpath(__file__,"restore_utility.glade"))
+        self.glade.signal_autoconnect(self)
+
+        widgets = ("Dialog", "DialogVBox", "DialogActionArea", "CancelButton", "OKButton",
+                "VBox", "Label", "Alignment", "ProgressBar")
+        for widgetName in widgets:
+            setattr(self, "_" + widgetName, self.glade.get_widget(widgetName))
+
+    def on_Dialog_close(self, widget, userData=None):
+        println(repr(userData))
+        self.exit()
+
+    def on_Dialog_response(self, widget, response):
+        handlers = {
+            gtk.RESPONSE_NONE: self.exit,
+            gtk.RESPONSE_DELETE_EVENT: self.exit,
+            gtk.RESPONSE_OK: self.doRestore,
+            gtk.RESPONSE_CANCEL: self.cancelled
+        }
+        handlers.get(response)()
+
+    def exit(self):
         reactor.stop()
 
-    def _on_map_event(self, event, m):
-        pass
+    def cancelled(self):
+        self._Dialog.destroy()
+        self.exit()
 
-    def _restore(self, button):
+    def doRestore(self):
         self.start()
 
-    def _build_welcome_message(self):
-        vbox = gtk.VBox()
-        label = gtk.Label('Bla bla bla...')
-        button = gtk.Button('Okay, I understand')
-        button.connect('clicked', self._restore)
-        vbox.pack_start(label)
-        hbox = gtk.HBox()
-        hbox.pack_start(button)
-        vbox.pack_end(hbox)
-        self.add(vbox)
+    def run_next_task(self):
+        if self._current_task < len(self._tasks):
+            self._ProgressBar.set_text(self._tasks[self._current_task]['description'])
+            self._ProgressBar.set_fraction((self._current_task+1)/float(len(self._tasks)))
+        JolicloudRestoreUtilityBase.run_next_task(self)
 
-def do_restore():
+    def tasks_completed(self):
+        self.exit()
+
+if __name__ == '__main__':
     if os.environ.get('DISPLAY', False):
         JolicloudRestoreUtilityGtk()
     else:
         JolicloudRestoreUtilityText()
     reactor.run()
-
-if __name__ == '__main__':
-    do_restore()
-
