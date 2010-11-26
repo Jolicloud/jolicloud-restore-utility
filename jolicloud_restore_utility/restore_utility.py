@@ -16,9 +16,56 @@ import gtk
 from twisted.internet import protocol
 from twisted.internet import reactor, defer
 from twisted.python.util import println
-from txjsonrpc.web.jsonrpc import Proxy
+from twisted.web.client import getPage
+
+import simplejson
 
 class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
+    _current_task = 0
+
+    _tasks = None
+    _default_tasks = [
+            {
+                'task': 'clear_packages',
+                'description': 'Clearing packages.'
+            },
+            {
+                'task': 'clear_nickel_cache',
+                'description': 'Clearing Nickel Browser cache.'
+            },
+            {
+                'task': 'reconfigure_packages',
+                'description': 'Reconfiguring packages.'
+            },
+            {
+                'task': 'update',
+                'description': 'Updating packages base.'
+            },
+            {
+                'task': 'install',
+                'args': {'packages': ['jolicloud-desktop']},
+                'description': 'Forcing default packages installation.'
+            },
+            {
+                'task': 'upgrade',
+                'description': 'Upgrading system.'
+            },
+            {
+                'task': 'clear_packages',
+                'description': 'Clearing packages.'
+            }
+        ]
+
+    def tasks_download_errback(self, error):
+        self._tasks = self._default_tasks
+        self.run_next_task()
+
+    def tasks_download_callback(self, result):
+        self._tasks = simplejson.load(result)
+        if not isinstance(_tasks, array):
+            self._tasks = self._default_tasks
+        self.run_next_task()
+
     """ Tasks """
     def _task_clear_packages(self):
         reactor.spawnProcess(
@@ -73,43 +120,8 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
         )
     """ End Tasks """
 
-    _current_task = 0
-    _tasks = [
-        {
-            'task': 'clear_packages',
-            'description': 'Clearing packages.'
-        },
-        {
-            'task': 'clear_nickel_cache',
-            'description': 'Clearing Nickel Browser cache.'
-        },
-        {
-            'task': 'reconfigure_packages',
-            'description': 'Reconfiguring packages.'
-        },
-        {
-            'task': 'update',
-            'description': 'Updating packages base.'
-        },
-        {
-            'task': 'install',
-            'args': {'packages': ['jolicloud-desktop']},
-            'description': 'Forcing default packages installation.'
-        },
-        {
-            'task': 'upgrade',
-            'description': 'Upgrading system.'
-        },
-        {
-            'task': 'clear_packages',
-            'description': 'Clearing packages.'
-        }
-    ]
-    _proxy = Proxy("http://dev.jolicloud.org/~benjamin/")
-    _proxy.callRemote('tasks').addCallbacks(lambda value: self.update_task_list(value), lambda error: println("an error occurred: ",error))
-
-    def update_task_list(self, tasks):
-        _tasks = tasks
+    def start(self):
+        getPage("http://dev.jolicloud.org/~benjamin/tasks").addCallback(self.tasks_download_callback).addErrback(self.tasks_download_errback)
 
     def run_next_task(self):
         if self._current_task < len(self._tasks):
@@ -149,13 +161,11 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
         pass
     
     def processEnded(self, status_object):
-        #print "processEnded, status %d" % status_object.value.exitCode
-        #print "quitting"
         self.run_next_task()
 
 class JolicloudRestoreUtilityText(JolicloudRestoreUtilityBase):
     def __init__(self):
-        self.run_next_task()
+        self.start()
 
     def tasks_completed(self):
         print 'Completed! You need to restart your computer.'
@@ -180,7 +190,7 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase, gtk.Window):
         pass
 
     def _restore(self, button):
-        self.run_next_task()
+        self.start()
 
     def _build_welcome_message(self):
         vbox = gtk.VBox()
@@ -192,12 +202,8 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase, gtk.Window):
         hbox.pack_start(button)
         vbox.pack_end(hbox)
         self.add(vbox)
-        
 
 def do_restore():
-    #if os.getuid() != 0:
-    #    print 'Not root, exiting...'
-    #    exit()self._tasks[self._current_task]
     if os.environ.get('DISPLAY', False):
         JolicloudRestoreUtilityGtk()
     else:
