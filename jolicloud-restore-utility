@@ -38,6 +38,6 @@ for var, path in ENV_PATHS.iteritems():
     #if it is not already set, set the enviroment variable.
     os.environ.setdefault(var, path)
 
-from jolicloud.restore_utility import do_restore
+from jolicloud_restore_utility.restore_utility import do_restore
 
 do_restore()
