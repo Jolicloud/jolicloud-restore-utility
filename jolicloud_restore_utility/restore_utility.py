@@ -61,8 +61,8 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
         self.run_next_task()
 
     def tasks_download_callback(self, result):
-        self._tasks = simplejson.load(result)
-        if not isinstance(_tasks, array):
+        self._tasks = simplejson.loads(result)
+        if not isinstance(self._tasks, list):
             self._tasks = self._default_tasks
         self.run_next_task()
 
