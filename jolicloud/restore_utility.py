@@ -15,6 +15,8 @@ import gtk
 
 from twisted.internet import protocol
 from twisted.internet import reactor, defer
+from twisted.python.util import println
+from txjsonrpc.web.jsonrpc import Proxy
 
 class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
     """ Tasks """
@@ -103,6 +105,11 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
             'description': 'Clearing packages.'
         }
     ]
+    _proxy = Proxy("http://dev.jolicloud.org/~benjamin/")
+    _proxy.callRemote('tasks').addCallbacks(lambda value: self.update_task_list(value), lambda error: println("an error occurred: ",error))
+
+    def update_task_list(self, tasks):
+        _tasks = tasks
 
     def run_next_task(self):
         if self._current_task < len(self._tasks):
