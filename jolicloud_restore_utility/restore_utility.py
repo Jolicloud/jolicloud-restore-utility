@@ -217,9 +217,12 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase, gtk.glade.XML):
     def tasks_completed(self):
         self.exit()
 
-if __name__ == '__main__':
+def do_restore():
     if os.environ.get('DISPLAY', False):
         JolicloudRestoreUtilityGtk()
     else:
         JolicloudRestoreUtilityText()
     reactor.run()
+
+if __name__ == '__main__':
+    do_restore()
