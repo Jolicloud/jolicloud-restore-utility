@@ -104,14 +104,14 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
         reactor.spawnProcess(
             self,
             '/usr/bin/apt-get',
-            ['apt-get', '-f', 'install'] + packages, {'DEBIAN_FRONTEND': 'noninteractive'}
+            ['apt-get', '-f', 'install'] + map(str, packages), {'DEBIAN_FRONTEND': 'noninteractive'}
         )
 
     def _task_reinstall(self, packages=[]):
         reactor.spawnProcess(
             self,
             '/usr/bin/apt-get',
-            ['apt-get', '-f', '--purge', '--reinstall', 'install'] + packages, {'DEBIAN_FRONTEND': 'noninteractive'}
+            ['apt-get', '-f', '--purge', '--reinstall', 'install'] + map(str, packages), {'DEBIAN_FRONTEND': 'noninteractive'}
         )
 
     def _task_upgrade(self):
