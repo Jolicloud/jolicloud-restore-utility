@@ -1,3 +1,24 @@
+jolicloud-restore-utility (0.2) robby-1.1; urgency=low
+
+  * Implement HTTP tasks download [requires txjsonrpc module]
+  * Use twisted.web.client instead of txjsonrpc as we expect tasks to be
+    a static file
+  * Improve UI
+  * Revive do_restore() function as it's used by the master program
+  * Set focus on OK button
+  * Set Jolicloud in bold in dialog message
+  * Modify padding around progress bar
+  * Split tasks list getter from tasks executer. Add Details expander in
+    UI
+  * Cast unicode package names to str
+  * Add gconf-defaults file for setting up the metacity keybinding
+  * use #!/usr/bin/python per Debian Python Policy
+  * Fix build script
+  * Center the dialog window and set correct icon
+  * Debian rules to setup default GConf
+
+ -- Benjamin Ryzman <benjamin@jolicloud.org>  Sat, 27 Nov 2010 13:01:10 +0100
+
 jolicloud-restore-utility (0.1) robby; urgency=low
 
   * Initial release.
