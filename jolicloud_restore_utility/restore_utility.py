@@ -56,15 +56,17 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
             }
         ]
 
+    def update_tasks_list(self, tasks):
+        self._tasks = tasks
+
     def tasks_download_errback(self, error):
-        self._tasks = self._default_tasks
-        self.run_next_task()
+        self.update_tasks_list(self._default_tasks)
 
     def tasks_download_callback(self, result):
-        self._tasks = simplejson.loads(result)
-        if not isinstance(self._tasks, list):
-            self._tasks = self._default_tasks
-        self.run_next_task()
+        tasks = simplejson.loads(result)
+        if not isinstance(tasks, list):
+            tasks = self._default_tasks
+        self.update_tasks_list(tasks)
 
     """ Tasks """
     def _task_clear_packages(self):
@@ -120,7 +122,7 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
         )
     """ End Tasks """
 
-    def start(self):
+    def __init__(self):
         getPage("http://dev.jolicloud.org/~benjamin/tasks").addCallback(self.tasks_download_callback).addErrback(self.tasks_download_errback)
 
     def run_next_task(self):
@@ -157,10 +159,9 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
         self.run_next_task()
 
 class JolicloudRestoreUtilityText(JolicloudRestoreUtilityBase):
-    _hbox = None
-
     def __init__(self):
-        self.start()
+        JolicloudRestoreUtilityBase.__init__(self)
+        self.run_next_task()
 
     def tasks_completed(self):
         print 'Completed! You need to restart your computer.'
@@ -175,15 +176,22 @@ class JolicloudRestoreUtilityText(JolicloudRestoreUtilityBase):
             )
         JolicloudRestoreUtilityBase.run_next_task(self)
 
-class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase, gtk.glade.XML):
+class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
     def __init__(self):
         self.glade = glade.XML(sibpath(__file__,"restore_utility.glade"))
         self.glade.signal_autoconnect(self)
 
-        widgets = ("Dialog", "DialogVBox", "DialogActionArea", "CancelButton", "OKButton",
-                "VBox", "Label", "Alignment", "ProgressBar")
-        for widgetName in widgets:
-            setattr(self, "_" + widgetName, self.glade.get_widget(widgetName))
+        for widget in self.glade.get_widget_prefix(""):
+            setattr(self, "_" + widget.get_name(), widget)
+
+        JolicloudRestoreUtilityBase.__init__(self)
+
+    def update_tasks_list(self,tasks):
+        JolicloudRestoreUtilityBase.update_tasks_list(self, tasks)
+        text = ""
+        for d in [t['description'] for t in tasks]:
+            text += d+"\n"
+        self._Details.get_buffer().set_text(text.strip())
 
     def on_Dialog_close(self, widget, userData=None):
         println(repr(userData))
@@ -206,7 +214,7 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase, gtk.glade.XML):
         self.exit()
 
     def doRestore(self):
-        self.start()
+        self.run_next_task()
 
     def run_next_task(self):
         if self._current_task < len(self._tasks):
