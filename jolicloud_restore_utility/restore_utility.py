@@ -11,6 +11,7 @@ import traceback
 import datetime
 import pygtk
 pygtk.require('2.0')
+import gobject
 import gtk
 from gtk import glade
 
@@ -226,7 +227,7 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         self._CancelButton.set_sensitive(False)
         self._OKButton.set_sensitive(False)
         self._Dialog.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.WATCH))
-        self.run_next_task()
+        gobject.idle_add(self.run_next_task)
 
     def run_next_task(self):
         if self._current_task < len(self._tasks):
