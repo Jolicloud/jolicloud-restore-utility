@@ -185,6 +185,8 @@ class JolicloudRestoreUtilityText(JolicloudRestoreUtilityBase):
         JolicloudRestoreUtilityBase.run_next_task(self)
 
 class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
+    running = False
+
     def __init__(self):
         self.glade = glade.XML(sibpath(__file__,"restore_utility.glade"))
         self.glade.signal_autoconnect(self)
@@ -216,16 +218,21 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         handlers.get(response)()
 
     def exit(self):
+        if self.running:
+            if self._Dialog:
+                self._Dialog.hide()
+            return True
+        if self._Dialog:
+            self._Dialog.destroy()
         reactor.stop()
 
     def cancelled(self):
-        self._Dialog.destroy()
         self.exit()
 
     def doRestore(self):
+        self.running = True
         self._ProgressBar.map()
-        self._CancelButton.set_sensitive(False)
-        self._OKButton.set_sensitive(False)
+        self._Dialog.set_sensitive(False)
         self._Dialog.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.WATCH))
         gobject.idle_add(self.run_next_task)
 
@@ -236,6 +243,7 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         JolicloudRestoreUtilityBase.run_next_task(self)
 
     def tasks_completed(self):
+        self.running = False
         self.exit()
 
 def do_restore():
