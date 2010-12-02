@@ -8,6 +8,6 @@ Homepage: http://www.jolicloud.com
 
 Package: jolicloud-restore-utility
 Architecture: any
-Depends: python (>=2.6), python-gtk2, python-twisted, python-simplejson
+Depends: python (>=2.6), python-gtk2, python-twisted-core, python-twisted-web, python-twisted-lore, python-twisted-runner, python-simplejson
 Description: Jolicloud Restore Utility
 
