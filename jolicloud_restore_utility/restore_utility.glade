@@ -21,7 +21,7 @@
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
   <property name="has_separator">True</property>
-  <signal name="close" handler="on_RestoreWindow_close" last_modification_time="Fri, 26 Nov 2010 14:33:41 GMT"/>
+  <signal name="close" handler="on_Dialog_close" last_modification_time="Fri, 26 Nov 2010 14:33:41 GMT"/>
   <signal name="response" handler="on_Dialog_response" last_modification_time="Fri, 26 Nov 2010 14:45:00 GMT"/>
 
   <child internal-child="vbox">
