@@ -1,2 +1,2 @@
-/apps/metacity/global_keybindings/run_command_1 "<Alt>F12"
-/apps/metacity/keybinding_commands/command_1 "jolicloud-restore-utility"
+/apps/metacity/global_keybindings/run_command_1 "<Shift><Control>F10"
+/apps/metacity/keybinding_commands/command_1 "gksudo jolicloud-restore-utility"
