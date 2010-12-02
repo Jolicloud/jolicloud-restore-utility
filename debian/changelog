@@ -1,3 +1,27 @@
+jolicloud-restore-utility (0.3) robby-1.1; urgency=low
+
+  * Change name to Jolicloud Restore Utility
+  * Turn bold off on Jolicloud in description
+  * Make dependencies more granular. Interestingly, does not work
+    without either -runner or -lore
+  * Change shortcut to Shift-Control-F10 instead of Alt-F12. Update key
+    binding to use gksudo
+  * Only display the progress bar when process starts
+  * Add a details attribute to tasks
+  * Grow the scrollbar width in order for the details to be shown
+    completely
+  * Automatically edit /etc/sudoers at (un)installation
+  * Disable buttons and set watch cursor during operations
+  * Simplify main script
+  * Use proper gobject callback to do the export from the GTK+ version
+  * Fix signal name typo
+  * Only exit the program when all tasks have been completed, else just
+    hide the window
+  * Fix text mode
+  * Implement mutex
+
+ -- Benjamin Ryzman <benjamin@jolicloud.org>  Thu, 02 Dec 2010 19:37:29 +0100
+
 jolicloud-restore-utility (0.2.1) robby-1.1; urgency=low
 
   * Fix metacity keybinding
