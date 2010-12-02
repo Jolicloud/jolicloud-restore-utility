@@ -18,6 +18,7 @@ from gtk import glade
 from twisted.internet import protocol
 from twisted.internet import reactor, defer
 from twisted.python.util import println, sibpath
+from twisted.python.lockfile import FilesystemLock
 from twisted.web.client import getPage
 
 import simplejson
@@ -247,11 +248,14 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         self.exit()
 
 def do_restore():
-    if os.environ.get('DISPLAY', False):
-        JolicloudRestoreUtilityGtk()
-    else:
-        JolicloudRestoreUtilityText()
-    reactor.run()
+    lock = FilesystemLock("/var/run/jolicloud_restore_utility.lock")
+    if lock.lock():
+        if os.environ.get('DISPLAY', False):
+            JolicloudRestoreUtilityGtk()
+        else:
+            JolicloudRestoreUtilityText()
+        reactor.run()
+        lock.unlock()
 
 if __name__ == '__main__':
     do_restore()
