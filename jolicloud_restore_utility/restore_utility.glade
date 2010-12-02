@@ -6,7 +6,7 @@
 <widget class="GtkDialog" id="Dialog">
   <property name="border_width">10</property>
   <property name="visible">True</property>
-  <property name="title" translatable="yes">Jolicloud Troubleshooter</property>
+  <property name="title" translatable="yes">Jolicloud Restore Utility</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER</property>
   <property name="modal">False</property>
