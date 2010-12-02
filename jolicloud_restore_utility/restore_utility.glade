@@ -80,7 +80,7 @@
 	  <child>
 	    <widget class="GtkLabel" id="Label">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">&lt;b&gt;Jolicloud&lt;/b&gt; will now run an automated series of commands in order to troubleshoot your computer.</property>
+	      <property name="label" translatable="yes">Jolicloud will now run an automated series of commands in order to troubleshoot your computer.</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">True</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
