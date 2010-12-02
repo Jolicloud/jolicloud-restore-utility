@@ -167,8 +167,8 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
         self.run_next_task()
 
 class JolicloudRestoreUtilityText(JolicloudRestoreUtilityBase):
-    def __init__(self):
-        JolicloudRestoreUtilityBase.__init__(self)
+    def update_tasks_list(self, tasks):
+        JolicloudRestoreUtilityBase.update_tasks_list(self, tasks)
         self.run_next_task()
 
     def tasks_completed(self):
