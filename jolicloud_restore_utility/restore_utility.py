@@ -203,7 +203,6 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         self._Details.get_buffer().set_text(text.strip())
 
     def on_Dialog_close(self, widget, userData=None):
-        println(repr(userData))
         self.exit()
 
     def on_Dialog_response(self, widget, response):
@@ -224,6 +223,9 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
 
     def doRestore(self):
         self._ProgressBar.map()
+        self._CancelButton.set_sensitive(False)
+        self._OKButton.set_sensitive(False)
+        self._Dialog.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.WATCH))
         self.run_next_task()
 
     def run_next_task(self):
