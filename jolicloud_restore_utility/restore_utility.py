@@ -26,33 +26,40 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
 
     _default_tasks = [
             {
-                'task': 'clear_packages',
-                'description': 'Clearing packages.'
+                "task": "clear_packages",
+                "description": "Clearing out the local repository of package files.",
+                "details": "Clear out the local repository of package files."
             },
             {
-                'task': 'clear_nickel_cache',
-                'description': 'Clearing Nickel Browser cache.'
+                "task": "clear_nickel_cache",
+                "description": "Clearing browser cache.",
+                "details": "Clear browser cache."
             },
             {
-                'task': 'reconfigure_packages',
-                'description': 'Reconfiguring packages.'
+                "task": "reconfigure_packages",
+                "description": "Reconfiguring packages.",
+                "details": "Reconfigure packages."
             },
             {
-                'task': 'update',
-                'description': 'Updating packages base.'
+                "task": "update",
+                "description": "Updating package index files.",
+                "details": "Update package index files."
             },
             {
-                'task': 'install',
-                'args': {'packages': ['jolicloud-desktop']},
-                'description': 'Forcing default packages installation.'
+                "task": "install",
+                "args": {"packages": ["jolicloud-desktop"]},
+                "description": "Forcing default packages installation.",
+                "details": "Force default packages installation."
             },
             {
-                'task': 'upgrade',
-                'description': 'Upgrading system.'
+                "task": "upgrade",
+                "description": "Upgrading system.",
+                "details": "Upgrade system."
             },
             {
-                'task': 'clear_packages',
-                'description': 'Clearing packages.'
+                "task": "clear_packages",
+                "description": "Clearing out the local repository of package files.",
+                "details": "Clear out the local repository of package files."
             }
         ]
 
@@ -191,7 +198,7 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
     def update_tasks_list(self,tasks):
         JolicloudRestoreUtilityBase.update_tasks_list(self, tasks)
         text = ""
-        for d in [t['description'] for t in tasks]:
+        for d in [t['details'] for t in tasks]:
             text += d+"\n"
         self._Details.get_buffer().set_text(text.strip())
 
