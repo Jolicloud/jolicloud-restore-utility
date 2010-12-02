@@ -184,6 +184,8 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         for widget in self.glade.get_widget_prefix(""):
             setattr(self, "_" + widget.get_name(), widget)
 
+        self._ProgressBar.unmap()
+
         JolicloudRestoreUtilityBase.__init__(self)
 
     def update_tasks_list(self,tasks):
@@ -214,6 +216,7 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         self.exit()
 
     def doRestore(self):
+        self._ProgressBar.map()
         self.run_next_task()
 
     def run_next_task(self):
