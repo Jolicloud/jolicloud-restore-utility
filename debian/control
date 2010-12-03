@@ -2,12 +2,14 @@ Source: jolicloud-restore-utility
 Section: jolicloud/net
 Priority: optional
 Maintainer: Jolicloud developers <developers@jolicloud.org>
-Build-Depends: cdbs (>= 0.4.49), debhelper (>= 7), python (>= 2.4), python-support
+Build-Depends: cdbs (>= 0.4.49), debhelper (>= 7), python (>= 2.4), python-support (>= 0.5.3)
+XS-Python-Version: current
+XB-Python-Version: ${python:Versions}
 Standards-Version: 3.8.0
 Homepage: http://www.jolicloud.com
 
 Package: jolicloud-restore-utility
-Architecture: any
-Depends: python (>=2.6), python-gtk2, python-twisted-core, python-twisted-web, python-twisted-lore, python-twisted-runner, python-simplejson
+Architecture: all
+Depends: python-gtk2, python-twisted-core, python-twisted-web, python-twisted-lore, python-twisted-runner, python-simplejson, ${python:Depends}
 Description: Jolicloud Restore Utility
 

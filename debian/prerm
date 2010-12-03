@@ -1,6 +1,11 @@
-#!/bin/sh -e
+#!/bin/sh
+
+set -e
+
 cp /etc/sudoers /etc/sudoers.jolicloud_restore_utility
 sed '/# JOLICLOUD-RESTORE-UTILITY-START/,/# JOLICLOUD-RESTORE-UTILITY-END/ d' < /etc/sudoers.jolicloud_restore_utility > /etc/sudoers
 rm /etc/sudoers.jolicloud_restore_utility
+
+#DEBHELPER#
 
 exit 0
