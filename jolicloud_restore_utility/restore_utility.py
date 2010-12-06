@@ -188,6 +188,7 @@ class JolicloudRestoreUtilityText(JolicloudRestoreUtilityBase):
 
 class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
     running = False
+    complete = False
 
     def __init__(self):
         self.glade = glade.XML(sibpath(__file__,"restore_utility.glade"))
@@ -219,6 +220,8 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
             gtk.RESPONSE_OK: self.doRestore,
             gtk.RESPONSE_CANCEL: self.cancelled
         }
+        if self.complete:
+            handlers[gtk.RESPONSE_OK] = self.exit
         handlers.get(response)()
 
     def exit(self):
@@ -250,7 +253,11 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
 
     def tasks_completed(self):
         self.running = False
-        self.exit()
+        self.complete = True
+        self._Dialog.present()
+        self._OKButton.set_sensitive(True)
+        self._ProgressBar.set_text("All operations complete!")
+        self._ProgressBar.set_fraction(1.0)
 
     def outReceived(self, data):
         if hasattr(self, "_Details"):
