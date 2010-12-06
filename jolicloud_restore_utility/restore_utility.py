@@ -38,9 +38,9 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
                 "details": "Clear browser cache."
             },
             {
-                "task": "reconfigure_packages",
-                "description": "Reconfiguring packages.",
-                "details": "Reconfigure packages."
+                "task": "configure_pending_packages",
+                "description": "Configuring pending packages.",
+                "details": "Configure pending packages."
             },
             {
                 "task": "update",
@@ -82,7 +82,7 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
         reactor.spawnProcess(
             self,
             '/usr/bin/apt-get',
-            ['apt-get', 'clean'], {'DEBIAN_FRONTEND': 'noninteractive'}
+            ['apt-get', '-y', 'clean'], {'DEBIAN_FRONTEND': 'noninteractive'}
         )
 
     def _task_clear_nickel_cache(self):
@@ -92,42 +92,44 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
             ['rm', '-fr'] + glob.glob('/home/*/.config/google-chrome/Default/Application Cache/*'), {}
         )
 
-    def _task_reconfigure_packages(self):
+    def _task_configure_pending_packages(self):
         """
-        dpkg-reconfigure --all --force
+        dpkg --configure --pending
         """
+        env = os.environ
+        env['DEBIAN_FRONTEND'] = 'noninteractive'
         reactor.spawnProcess(
             self,
-            '/usr/sbin/dpkg-reconfigure',
-            ['dpkg-reconfigure', '--all', '--force'], {'DEBIAN_FRONTEND': 'noninteractive'}
+            '/usr/bin/dpkg',
+            ['dpkg', '--configure', '--pending'], env
         )
 
     def _task_update(self):
         reactor.spawnProcess(
             self,
             '/usr/bin/apt-get',
-            ['apt-get', 'update'], {'DEBIAN_FRONTEND': 'noninteractive'}
+            ['apt-get', '-y', 'update'], {'DEBIAN_FRONTEND': 'noninteractive'}
         )
 
     def _task_install(self, packages=[]):
         reactor.spawnProcess(
             self,
             '/usr/bin/apt-get',
-            ['apt-get', '-f', 'install'] + map(str, packages), {'DEBIAN_FRONTEND': 'noninteractive'}
+            ['apt-get', '-y', '-f', 'install'] + map(str, packages), {'DEBIAN_FRONTEND': 'noninteractive'}
         )
 
     def _task_reinstall(self, packages=[]):
         reactor.spawnProcess(
             self,
             '/usr/bin/apt-get',
-            ['apt-get', '-f', '--purge', '--reinstall', 'install'] + map(str, packages), {'DEBIAN_FRONTEND': 'noninteractive'}
+            ['apt-get', '-y', '-f', '--purge', '--reinstall', 'install'] + map(str, packages), {'DEBIAN_FRONTEND': 'noninteractive'}
         )
 
     def _task_upgrade(self):
         reactor.spawnProcess(
             self,
             '/usr/bin/apt-get',
-            ['apt-get', 'dist-upgrade'], {'DEBIAN_FRONTEND': 'noninteractive'}
+            ['apt-get', '-y', 'dist-upgrade'], {'DEBIAN_FRONTEND': 'noninteractive'}
         )
     """ End Tasks """
 
@@ -254,12 +256,14 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
             buf = self._Details.get_buffer()
             i = buf.get_end_iter()
             buf.insert(i,data)
+            self._Details.scroll_mark_onscreen(buf.get_insert())
 
     def errReceived(self, data):
         if hasattr(self, "_Details"):
             buf = self._Details.get_buffer()
             i = buf.get_end_iter()
             buf.insert(i,data)
+            self._Details.scroll_mark_onscreen(buf.get_insert())
 
 def do_restore():
     lock = FilesystemLock("/var/run/jolicloud_restore_utility.lock")
