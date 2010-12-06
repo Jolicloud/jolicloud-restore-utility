@@ -134,7 +134,7 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
     """ End Tasks """
 
     def __init__(self):
-        getPage("http://dev.jolicloud.org/~benjamin/tasks").addCallback(self.tasks_download_callback).addErrback(self.tasks_download_errback)
+        getPage("http://my.jolicloud.com/restore.json").addCallback(self.tasks_download_callback).addErrback(self.tasks_download_errback)
 
     def run_next_task(self):
         if self._current_task < len(self._tasks):
