@@ -1,3 +1,20 @@
+jolicloud-restore-utility (0.4) robby-1.1; urgency=low
+
+  * Fix package control and maintainer scripts
+  * Update wording to manage customers expectations.
+  * Update details with commands output
+  * Use apt-get -y option. Change dpkg-reconfigure to dpkg -configure.
+  * Set up env for dpkg
+  * Change tasks URL to production server
+  * Toggle OK button sensitivity according to tasks list freshness. Use
+    reactor.callLater instead of gobject.idle_add
+  * Set getPage timeout to 10 seconds
+  * More wording changes
+  * Set dialog to non-deletable. Present dialog at end of process
+  * Initialize spawned process environment for both dpkg and apt-get
+
+ -- Benjamin Ryzman <benjamin@jolicloud.org>  Mon, 06 Dec 2010 17:52:17 +0100
+
 jolicloud-restore-utility (0.3) robby-1.1; urgency=low
 
   * Change name to Jolicloud Restore Utility
