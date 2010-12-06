@@ -96,10 +96,12 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
         """
         dpkg --configure --pending
         """
+        env = os.environ
+        env['DEBIAN_FRONTEND'] = 'noninteractive'
         reactor.spawnProcess(
             self,
             '/usr/bin/dpkg',
-            ['dpkg', '--configure', '--pending'], {'DEBIAN_FRONTEND': 'noninteractive'}
+            ['dpkg', '--configure', '--pending'], env
         )
 
     def _task_update(self):
