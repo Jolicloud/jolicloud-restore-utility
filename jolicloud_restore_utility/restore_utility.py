@@ -1,8 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import warnings
+
+warnings.simplefilter("ignore")
 from twisted.internet import gtk2reactor
 gtk2reactor.install()
+warnings.simplefilter("default")
 
 import os
 import sys
@@ -81,7 +85,7 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
         reactor.spawnProcess(
             self,
             '/usr/bin/apt-get',
-            ['apt-get', '-y', 'clean'], {'DEBIAN_FRONTEND': 'noninteractive'}
+            ['apt-get', '-y', 'clean'], env=None
         )
 
     def _task_clear_nickel_cache(self):
@@ -95,40 +99,40 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
         """
         dpkg --configure --pending
         """
-        env = os.environ
-        env['DEBIAN_FRONTEND'] = 'noninteractive'
         reactor.spawnProcess(
             self,
             '/usr/bin/dpkg',
-            ['dpkg', '--configure', '--pending'], env
+            ['dpkg', '--configure', '--pending'], env=None
         )
 
     def _task_update(self):
         reactor.spawnProcess(
             self,
             '/usr/bin/apt-get',
-            ['apt-get', '-y', 'update'], {'DEBIAN_FRONTEND': 'noninteractive'}
+            ['apt-get', '-y', 'update'], env=None
         )
 
     def _task_install(self, packages=[]):
-        reactor.spawnProcess(
-            self,
-            '/usr/bin/apt-get',
-            ['apt-get', '-y', '-f', 'install'] + map(str, packages), {'DEBIAN_FRONTEND': 'noninteractive'}
-        )
+        if packages:
+            reactor.spawnProcess(
+                self,
+                '/usr/bin/apt-get',
+                ['apt-get', '-y', '-f', 'install'] + map(str, packages), env=None
+            )
 
     def _task_reinstall(self, packages=[]):
-        reactor.spawnProcess(
-            self,
-            '/usr/bin/apt-get',
-            ['apt-get', '-y', '-f', '--purge', '--reinstall', 'install'] + map(str, packages), {'DEBIAN_FRONTEND': 'noninteractive'}
-        )
+        if packages:
+            reactor.spawnProcess(
+                self,
+                '/usr/bin/apt-get',
+                ['apt-get', '-y', '-f', '--purge', '--reinstall', 'install'] + map(str, packages), env=None
+            )
 
     def _task_upgrade(self):
         reactor.spawnProcess(
             self,
             '/usr/bin/apt-get',
-            ['apt-get', '-y', 'dist-upgrade'], {'DEBIAN_FRONTEND': 'noninteractive'}
+            ['apt-get', '-y', 'dist-upgrade'], env=None
         )
     """ End Tasks """
 
