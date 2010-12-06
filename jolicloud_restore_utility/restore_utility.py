@@ -11,7 +11,6 @@ import traceback
 import datetime
 import pygtk
 pygtk.require('2.0')
-import gobject
 import gtk
 from gtk import glade
 
@@ -198,6 +197,7 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
             setattr(self, "_" + widget.get_name(), widget)
 
         self._ProgressBar.unmap()
+        self._OKButton.set_sensitive(False) # wait for tasks list to get updated
 
         JolicloudRestoreUtilityBase.__init__(self)
 
@@ -207,6 +207,7 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         for d in [t['details'] for t in tasks]:
             text += d+"\n"
         self._Details.get_buffer().set_text(text.strip())
+        self._OKButton.set_sensitive(True)
 
     def on_Dialog_close(self, widget, userData=None):
         self.exit()
@@ -239,7 +240,7 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         self._CancelButton.set_sensitive(False)
         self._Details.get_buffer().set_text("")
         self._Dialog.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.WATCH))
-        gobject.idle_add(self.run_next_task)
+        reactor.callLater(0, self.run_next_task)
 
     def run_next_task(self):
         if self._current_task < len(self._tasks):
