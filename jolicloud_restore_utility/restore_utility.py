@@ -233,7 +233,9 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
     def doRestore(self):
         self.running = True
         self._ProgressBar.map()
-        self._Dialog.set_sensitive(False)
+        self._OKButton.set_sensitive(False)
+        self._CancelButton.set_sensitive(False)
+        self._Details.get_buffer().set_text("")
         self._Dialog.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.WATCH))
         gobject.idle_add(self.run_next_task)
 
@@ -246,6 +248,18 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
     def tasks_completed(self):
         self.running = False
         self.exit()
+
+    def outReceived(self, data):
+        if hasattr(self, "_Details"):
+            buf = self._Details.get_buffer()
+            i = buf.get_end_iter()
+            buf.insert(i,data)
+
+    def errReceived(self, data):
+        if hasattr(self, "_Details"):
+            buf = self._Details.get_buffer()
+            i = buf.get_end_iter()
+            buf.insert(i,data)
 
 def do_restore():
     lock = FilesystemLock("/var/run/jolicloud_restore_utility.lock")
