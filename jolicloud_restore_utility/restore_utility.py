@@ -198,11 +198,11 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         self.glade = glade.XML(sibpath(__file__,"restore_utility.glade"))
         self.glade.signal_autoconnect(self)
 
-        for widget in self.glade.get_widget_prefix(""):
-            setattr(self, "_" + widget.get_name(), widget)
+        #for widget in self.glade.get_widget_prefix(""):
+        #    setattr(self, "_" + widget.get_name(), widget)
 
-        self._ProgressBar.unmap()
-        self._OKButton.set_sensitive(False) # wait for tasks list to get updated
+        self.glade.get_widget('ProgressBar').unmap()
+        self.glade.get_widget('OKButton').set_sensitive(False) # wait for tasks list to get updated
 
         JolicloudRestoreUtilityBase.__init__(self)
 
@@ -211,8 +211,8 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         text = ""
         for d in [t['details'] for t in tasks]:
             text += d+"\n"
-        self._Details.get_buffer().set_text(text.strip())
-        self._OKButton.set_sensitive(True)
+        self.glade.get_widget('Details').get_buffer().set_text(text.strip())
+        self.glade.get_widget('OKButton').set_sensitive(True)
 
     def on_Dialog_close(self, widget, userData=None):
         self.exit()
@@ -230,11 +230,11 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
 
     def exit(self):
         if self.running:
-            if hasattr(self,"_Dialog"):
-                self._Dialog.hide()
+            #if hasattr(self,"_Dialog"):
+            self.glade.get_widget('Dialog').hide()
             return True
-        if hasattr(self,"_Dialog"):
-            self._Dialog.destroy()
+        #if hasattr(self,"_Dialog"):
+        self.glade.get_widget('Dialog').destroy()
         reactor.stop()
 
     def cancelled(self):
@@ -242,40 +242,40 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
 
     def doRestore(self):
         self.running = True
-        self._ProgressBar.map()
-        self._OKButton.set_sensitive(False)
-        self._CancelButton.set_sensitive(False)
-        self._Details.get_buffer().set_text("")
-        self._Dialog.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.WATCH))
+        self.glade.get_widget('ProgressBar').map()
+        self.glade.get_widget('OKButton').set_sensitive(False)
+        self.glade.get_widget('CancelButton').set_sensitive(False)
+        self.glade.get_widget('Details').get_buffer().set_text("")
+        self.glade.get_widget('Dialog').window.set_cursor(gtk.gdk.Cursor(gtk.gdk.WATCH))
         reactor.callLater(0, self.run_next_task)
 
     def run_next_task(self):
         if self._current_task < len(self._tasks):
-            self._ProgressBar.set_text(self._tasks[self._current_task]['description'])
-            self._ProgressBar.set_fraction((self._current_task+1)/float(len(self._tasks)))
+            self.glade.get_widget('ProgressBar').set_text(self._tasks[self._current_task]['description'])
+            self.glade.get_widget('ProgressBar').set_fraction((self._current_task+1)/float(len(self._tasks)))
         JolicloudRestoreUtilityBase.run_next_task(self)
 
     def tasks_completed(self):
         self.running = False
         self.complete = True
-        self._Dialog.present()
-        self._OKButton.set_sensitive(True)
-        self._ProgressBar.set_text("All operations complete!")
-        self._ProgressBar.set_fraction(1.0)
+        self.glade.get_widget('Dialog').present()
+        self.glade.get_widget('OKButton').set_sensitive(True)
+        self.glade.get_widget('ProgressBar').set_text("All operations complete!")
+        self.glade.get_widget('ProgressBar').set_fraction(1.0)
 
     def outReceived(self, data):
-        if hasattr(self, "_Details"):
-            buf = self._Details.get_buffer()
-            i = buf.get_end_iter()
-            buf.insert(i,data)
-            self._Details.scroll_mark_onscreen(buf.get_insert())
+        #if hasattr(self, "_Details"):
+        buf = self.glade.get_widget('Details').get_buffer()
+        i = buf.get_end_iter()
+        buf.insert(i,data)
+        self.glade.get_widget('Details').scroll_mark_onscreen(buf.get_insert())
 
     def errReceived(self, data):
-        if hasattr(self, "_Details"):
-            buf = self._Details.get_buffer()
-            i = buf.get_end_iter()
-            buf.insert(i,data)
-            self._Details.scroll_mark_onscreen(buf.get_insert())
+        #if hasattr(self, "_Details"):
+        buf = self.glade.get_widget('Details').get_buffer()
+        i = buf.get_end_iter()
+        buf.insert(i,data)
+        self.glade.get_widget('Details').scroll_mark_onscreen(buf.get_insert())
 
 def do_restore():
     lock = FilesystemLock("/var/run/jolicloud_restore_utility.lock")
