@@ -1,3 +1,9 @@
+jolicloud-restore-utility (0.4.2) robby-1.1; urgency=low
+
+  * Fixed missing attributs bug.
+
+ -- Jérémy Bethmont <jerem@jolicloud.org>  Tue, 07 Dec 2010 13:53:12 +0100
+
 jolicloud-restore-utility (0.4.1) robby-1.1; urgency=low
 
   [ Benjamin Ryzman ]
