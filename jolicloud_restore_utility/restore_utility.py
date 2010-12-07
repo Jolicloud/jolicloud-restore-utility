@@ -62,6 +62,11 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
                 "details": "Upgrade system."
             },
             {
+                "task": "autoremove",
+                "description": "Auto-remove packages unnecessary packages.",
+                "details": "Auto-remove packages no longer required on the system, like unused dependencies."
+            },
+            {
                 "task": "clear_packages",
                 "description": "Clearing out the local repository of package files.",
                 "details": "Clear out the local repository of package files."
@@ -134,6 +139,14 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
             '/usr/bin/apt-get',
             ['apt-get', '-y', 'dist-upgrade'], env=None
         )
+
+    def _task_autoremove(self):
+        reactor.spawnProcess(
+            self,
+            '/usr/bin/apt-get',
+            ['apt-get', '-y', '--purge', 'autoremove'], env=None
+        )
+
     """ End Tasks """
 
     def __init__(self):
