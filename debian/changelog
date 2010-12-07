@@ -1,3 +1,19 @@
+jolicloud-restore-utility (0.4.1) robby-1.1; urgency=low
+
+  [ Benjamin Ryzman ]
+  * Fix _Dialog error message upon Cancel
+
+  [ Adam McDaniel ]
+  * Ensure '#includedir' appears after all definitions in /etc/sudoers,
+    giving included sudo rules, like the one provided by jolicloud-
+    restore-utility, priority.
+
+  [ Benjamin Ryzman ]
+  * Use /etc/sudoers.d/01-restore instead of modifying /etc/sudoers
+  * Fix sed address
+
+ -- Benjamin Ryzman <benjamin@jolicloud.org>  Tue, 07 Dec 2010 13:34:43 +0100
+
 jolicloud-restore-utility (0.4) robby-1.1; urgency=low
 
   * Fix package control and maintainer scripts
