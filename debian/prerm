@@ -2,10 +2,6 @@
 
 set -e
 
-cp /etc/sudoers /etc/sudoers.jolicloud_restore_utility
-sed '/# JOLICLOUD-RESTORE-UTILITY-START/,/# JOLICLOUD-RESTORE-UTILITY-END/ d' < /etc/sudoers.jolicloud_restore_utility > /etc/sudoers
-rm /etc/sudoers.jolicloud_restore_utility
-
 # Remove the depricated, manually-generated-by-postinst 01-restore file
 rm /etc/sudoers.d/01-restore || true
 

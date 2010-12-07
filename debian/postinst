@@ -2,10 +2,6 @@
 
 set -e
 
-cp /etc/sudoers /etc/sudoers.jolicloud_restore_utility
-sed '/# JOLICLOUD-RESTORE-UTILITY-START/,/# JOLICLOUD-RESTORE-UTILITY-END/ d' < /etc/sudoers.jolicloud_restore_utility > /etc/sudoers
-rm /etc/sudoers.jolicloud_restore_utility
-
 chmod 0440 /etc/sudoers.d/01-jolicloud-restore-utility
 
 #DEBHELPER#
