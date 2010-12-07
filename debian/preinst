@@ -1,0 +1,15 @@
+#!/bin/sh
+
+set -e
+
+# Remove the line '#includedir /etc/sudoers.d' and re-add it to the bottom of
+# /etc/sudoers. This ensures that rules supplied in this directory are
+# applied to sudo AFTER "%admin ALL=(ALL) ALL"
+sed -e '/^#includedir /etc/sudoers.d$/d' -i /etc/sudoers
+echo "#includedir /etc/sudoers.d" >> /etc/sudoers
+
+# Note that sudo 1.7.2p1-1 and later provides /etc/sudoers.d, but
+# ubiquity's user-setup d-i may have appended something after the
+# #includedir directive, which is the reason for this hack.
+
+exit 0

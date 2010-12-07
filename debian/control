@@ -10,6 +10,6 @@ Homepage: http://www.jolicloud.com
 
 Package: jolicloud-restore-utility
 Architecture: all
-Depends: python-gtk2, python-twisted-core, python-twisted-web, python-twisted-lore, python-twisted-runner, python-simplejson, ${python:Depends}
+Depends: python-gtk2, python-twisted-core, python-twisted-web, python-twisted-lore, python-twisted-runner, python-simplejson, ${python:Depends}, sudo (>= 1.7.2p1-1)
 Description: Jolicloud Restore Utility
 
