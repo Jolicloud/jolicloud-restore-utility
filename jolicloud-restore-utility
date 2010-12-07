@@ -2,6 +2,7 @@
 
 import optparse
 import os
+import sys
 
 parser = optparse.OptionParser(usage='%prog [options]')
 
@@ -10,5 +11,9 @@ parser = optparse.OptionParser(usage='%prog [options]')
 os.environ['DEBIAN_FRONTEND'] = 'noninteractive'
 
 from jolicloud_restore_utility.restore_utility import do_restore
+
+if os.getuid():
+    os.system( 'sudo -E jolicloud-restore-utility' )
+    sys.exit()
 
 do_restore()
