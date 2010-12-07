@@ -230,10 +230,10 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
 
     def exit(self):
         if self.running:
-            if self._Dialog:
+            if hasattr(self,"_Dialog"):
                 self._Dialog.hide()
             return True
-        if self._Dialog:
+        if hasattr(self,"_Dialog"):
             self._Dialog.destroy()
         reactor.stop()
 
