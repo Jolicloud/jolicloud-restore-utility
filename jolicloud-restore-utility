@@ -13,7 +13,6 @@ os.environ['DEBIAN_FRONTEND'] = 'noninteractive'
 from jolicloud_restore_utility.restore_utility import do_restore
 
 if os.getuid():
-    os.system( 'sudo -E jolicloud-restore-utility' )
-    sys.exit()
+    os.execlp( 'sudo', '-E', __file__ )
 
 do_restore()
