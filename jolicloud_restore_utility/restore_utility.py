@@ -154,13 +154,18 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
 
     def run_next_task(self):
         if self._current_task < len(self._tasks):
-            if hasattr(self, '_task_%s' % self._tasks[self._current_task]['task']):
+            current_task = self._tasks[self._current_task]
+            if not current_task['disabled'] and hasattr(self, '_task_%s' % current_task['task']):
                 kwargs = {}
                 if self._tasks[self._current_task].has_key('args'):
                     for key, val in self._tasks[self._current_task]['args'].iteritems():
                         kwargs[str(key)] = val
                 getattr(self, '_task_%s' % self._tasks[self._current_task]['task'])(**kwargs)
                 self._current_task += 1
+            # ignore disabled/unknown tasks
+            else:
+                self._current_task += 1
+                self.run_next_task()
         else:
             self.tasks_completed()
 
