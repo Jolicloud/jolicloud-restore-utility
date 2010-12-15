@@ -220,17 +220,35 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         #    setattr(self, "_" + widget.get_name(), widget)
 
         self.glade.get_widget('ProgressBar').unmap()
+        self.glade.get_widget('Details').hide()
         self.glade.get_widget('OKButton').set_sensitive(False) # wait for tasks list to get updated
 
         JolicloudRestoreUtilityBase.__init__(self)
 
-    def update_tasks_list(self,tasks):
+    def update_tasks_list(self, tasks):
+        vb = self.glade.get_widget('VBox2')
         JolicloudRestoreUtilityBase.update_tasks_list(self, tasks)
-        text = ""
-        for d in [t['details'] for t in tasks]:
-            text += d+"\n"
-        self.glade.get_widget('Details').get_buffer().set_text(text.strip())
+        for t in tasks:
+            adj = self.glade.get_widget('ScrolledWindow').get_vadjustment()
+            cb = gtk.CheckButton(t['details'], False)
+            t['widget'] = cb
+            cb.connect('toggled',self.toggle_task,t)
+            cb.connect('focus_in_event', self.focus_in, adj)
+            cb.set_active(True)
+            vb.pack_start(cb)
+            cb.show()
         self.glade.get_widget('OKButton').set_sensitive(True)
+
+    def toggle_task(self, widget, task):
+        if widget.get_active():
+            task['disabled'] = False
+        else:
+            task['disabled'] = True
+
+    def focus_in(self, widget, event, adj):
+        alloc = widget.get_allocation()
+        if alloc.y < adj.value or alloc.y > adj.value + adj.page_size:
+            adj.set_value(min(alloc.y, adj.upper-adj.page_size))
 
     def on_Dialog_close(self, widget, userData=None):
         self.exit()
@@ -265,12 +283,21 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         self.glade.get_widget('CancelButton').set_sensitive(False)
         self.glade.get_widget('Details').get_buffer().set_text("")
         self.glade.get_widget('Dialog').window.set_cursor(gtk.gdk.Cursor(gtk.gdk.WATCH))
+        for t in self._tasks:
+            t['widget'].hide()
+        self.glade.get_widget('Details').show()
         reactor.callLater(0, self.run_next_task)
 
     def run_next_task(self):
         if self._current_task < len(self._tasks):
-            self.glade.get_widget('ProgressBar').set_text(self._tasks[self._current_task]['description'])
             self.glade.get_widget('ProgressBar').set_fraction((self._current_task+1)/float(len(self._tasks)))
+            current_task = self._tasks[self._current_task]
+            if not current_task['disabled']:
+                self.glade.get_widget('ProgressBar').set_text(current_task['description'])
+                buf = self.glade.get_widget('Details').get_buffer()
+                i = buf.get_end_iter()
+                buf.insert(i,current_task['description']+'\n')
+                self.glade.get_widget('Details').scroll_mark_onscreen(buf.get_insert())
         JolicloudRestoreUtilityBase.run_next_task(self)
 
     def tasks_completed(self):
@@ -280,6 +307,11 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         self.glade.get_widget('OKButton').set_sensitive(True)
         self.glade.get_widget('ProgressBar').set_text("All operations complete!")
         self.glade.get_widget('ProgressBar').set_fraction(1.0)
+        self.glade.get_widget('Dialog').window.set_cursor(None)
+        buf = self.glade.get_widget('Details').get_buffer()
+        i = buf.get_end_iter()
+        buf.insert(i,'Done.')
+        self.glade.get_widget('Details').scroll_mark_onscreen(buf.get_insert())
 
     def outReceived(self, data):
         #if hasattr(self, "_Details"):
