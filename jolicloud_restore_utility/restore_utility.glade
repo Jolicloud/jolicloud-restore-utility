@@ -11,13 +11,13 @@
   <property name="window_position">GTK_WIN_POS_CENTER</property>
   <property name="modal">False</property>
   <property name="resizable">False</property>
+  <property name="deletable">False</property>
   <property name="destroy_with_parent">False</property>
   <property name="icon_name">gtk-preferences</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
   <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
-  <property name="deletable">False</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
@@ -136,7 +136,7 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkExpander" id="DetailsExpander">
+	    <widget class="GtkExpander" id="Expander">
 	      <property name="border_width">6</property>
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
@@ -144,7 +144,7 @@
 	      <property name="spacing">6</property>
 
 	      <child>
-		<widget class="GtkScrolledWindow" id="ScrolledWindowDetails">
+		<widget class="GtkScrolledWindow" id="ScrolledWindow">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
@@ -175,7 +175,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkLabel" id="DetailsExpanderLabel">
+		<widget class="GtkLabel" id="ExpanderLabel">
 		  <property name="visible">True</property>
 		  <property name="label" translatable="yes">Details</property>
 		  <property name="use_underline">True</property>
