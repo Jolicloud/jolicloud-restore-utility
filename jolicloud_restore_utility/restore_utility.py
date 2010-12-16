@@ -63,7 +63,7 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
             },
             {
                 "task": "autoremove",
-                "description": "Auto-remove packages unnecessary packages.",
+                "description": "Auto-removing unnecessary packages.",
                 "details": "Auto-remove packages no longer required on the system, like unused dependencies."
             },
             {
