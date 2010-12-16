@@ -102,7 +102,7 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
         reactor.spawnProcess(
             self,
             '/bin/rm',
-            ['rm', '-fr'] + glob.glob('/home/*/.config/google-chrome/Default/Application Cache/*'), {}
+            ['rm', '-fr'] + glob.glob('/home/'+os.environ['SUDO_USER']+'/.config/google-chrome/Default/Application Cache/*'), {}
         )
 
     def _task_configure_pending_packages(self):
