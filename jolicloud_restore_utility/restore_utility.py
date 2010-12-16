@@ -72,9 +72,14 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
                 "details": "Clear out the local repository of package files."
             },
             {
-                "task": "topbar_cleanup",
-                "description": "Clean up the topbar and reset applets location.",
-                "details": "Cleaning up the topbar and resetting applets location."
+                "task": "cleanup_topbar",
+                "description": "Cleaning up the topbar and resetting applets location.",
+                "details": "Clean up the topbar and reset applets location."
+            },
+            {
+                "task": "reload_gnome_panel",
+                "description": "Reloading the GNOME panel.",
+                "details": "Reload the GNOME panel."
             },
         ]
 
@@ -152,11 +157,18 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
             ['apt-get', '-y', '--purge', 'autoremove'], env=None
         )
 
-    def _task_topbar_cleanup(self):
+    def _task_cleanup_topbar(self):
         reactor.spawnProcess(
             self,
-            '/usr/bin/gconftool-2',
-            ['gconftool-2', '--recursive-unset', '/apps/panel/applets'], env=None
+            '/usr/bin/sudo',
+            ['sudo', '-E', '-u', os.environ['SUDO_USER'], 'gconftool-2', '--recursive-unset', '/apps/panel'], env=None
+        )
+
+    def _task_reload_gnome_panel(self):
+        reactor.spawnProcess(
+            self,
+            '/usr/bin/killall',
+            ['killall', 'gnome-panel'], env=None
         )
 
     """ End Tasks """
