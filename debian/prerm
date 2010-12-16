@@ -2,8 +2,10 @@
 
 set -e
 
-# Remove the depricated, manually-generated-by-postinst 01-restore file
-rm /etc/sudoers.d/01-restore || true
+# Remove the deprecated, manually-generated-by-postinst 01-restore file
+if [ -f /etc/sudoers.d/01-restore ] ; then
+    rm /etc/sudoers.d/01-restore
+fi
 
 #DEBHELPER#
 
