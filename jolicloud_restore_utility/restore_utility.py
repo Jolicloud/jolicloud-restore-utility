@@ -70,7 +70,12 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
                 "task": "clear_packages",
                 "description": "Clearing out the local repository of package files.",
                 "details": "Clear out the local repository of package files."
-            }
+            },
+            {
+                "task": "topbar_cleanup",
+                "description": "Clean up the topbar and reset applets location.",
+                "details": "Cleaning up the topbar and resetting applets location."
+            },
         ]
 
     def update_tasks_list(self, tasks):
@@ -145,6 +150,13 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
             self,
             '/usr/bin/apt-get',
             ['apt-get', '-y', '--purge', 'autoremove'], env=None
+        )
+
+    def _task_topbar_cleanup(self):
+        reactor.spawnProcess(
+            self,
+            '/usr/bin/gconftool-2',
+            ['gconftool-2', '--recursive-unset', '/apps/panel/applets'], env=None
         )
 
     """ End Tasks """
