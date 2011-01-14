@@ -250,6 +250,8 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         self.glade.get_widget('ProgressBar').unmap()
         self.glade.get_widget('Details').hide()
         self.glade.get_widget('OKButton').set_sensitive(False) # wait for tasks list to get updated
+        color = self.glade.get_widget('Dialog').get_style().bg[0]
+        self.glade.get_widget('Explanation').modify_base(gtk.STATE_NORMAL,color)
 
         JolicloudRestoreUtilityBase.__init__(self)
 
