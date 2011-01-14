@@ -106,8 +106,12 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
     def _task_clear_nickel_cache(self):
         reactor.spawnProcess(
             self,
-            '/bin/rm',
-            ['rm', '-fr'] + glob.glob('/home/'+os.environ['SUDO_USER']+'/.config/google-chrome/Default/Application Cache/*'), {}
+            '/bin/sh',
+            [
+            'sh', '-c',
+            '/bin/rm -rf /home/' + os.environ['SUDO_USER'] + '/.config/google-chrome/Default/Application\ Cache/ ' +
+                '&& pkill nickel-browser && pkill nickel-browser'
+            ], {}
         )
 
     def _task_configure_pending_packages(self):
