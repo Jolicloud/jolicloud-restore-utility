@@ -220,7 +220,13 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
 
 class JolicloudRestoreUtilityText(JolicloudRestoreUtilityBase):
     def update_tasks_list(self, tasks):
+        println('Updating task list')
         JolicloudRestoreUtilityBase.update_tasks_list(self, tasks)
+        for t in tasks:
+            t['disabled'] = True
+            if hasattr(JolicloudRestoreUtilityBase, '_task_%s' % t['task']):
+                t['disabled'] = False
+        println('Done')
         self.run_next_task()
 
     def tasks_completed(self):
@@ -229,12 +235,20 @@ class JolicloudRestoreUtilityText(JolicloudRestoreUtilityBase):
 
     def run_next_task(self):
         if self._current_task < len(self._tasks):
-            print 'Executing task %d out of %d: %s' % (
-                self._current_task + 1,
-                len(self._tasks),
-                self._tasks[self._current_task]['description']
-            )
+            current_task = self._tasks[self._current_task]
+            if not current_task['disabled'] and hasattr(JolicloudRestoreUtilityBase, '_task_%s' % current_task['task']):
+                println('Executing task %d out of %d: %s' % (
+                    self._current_task + 1,
+                    len(self._tasks),
+                    current_task['description']
+                ))
         JolicloudRestoreUtilityBase.run_next_task(self)
+
+    def outReceived(self, data):
+        print data
+
+    def errReceived(self, data):
+        print data
 
 class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
     running = False
@@ -259,14 +273,16 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         vb = self.glade.get_widget('VBox2')
         JolicloudRestoreUtilityBase.update_tasks_list(self, tasks)
         for t in tasks:
-            adj = self.glade.get_widget('ScrolledWindow').get_vadjustment()
-            cb = gtk.CheckButton(t['details'], False)
-            t['widget'] = cb
-            cb.connect('toggled',self.toggle_task,t)
-            cb.connect('focus_in_event', self.focus_in, adj)
-            cb.set_active(True)
-            vb.pack_start(cb)
-            cb.show()
+            t['disabled'] = True
+            if hasattr(JolicloudRestoreUtilityBase, '_task_%s' % t['task']):
+                adj = self.glade.get_widget('ScrolledWindow').get_vadjustment()
+                cb = gtk.CheckButton(t['details'], False)
+                t['widget'] = cb
+                cb.connect('toggled',self.toggle_task,t)
+                cb.connect('focus_in_event', self.focus_in, adj)
+                cb.set_active(True)
+                vb.pack_start(cb)
+                cb.show()
         self.glade.get_widget('OKButton').set_sensitive(True)
 
     def toggle_task(self, widget, task):
@@ -322,7 +338,7 @@ class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
         if self._current_task < len(self._tasks):
             self.glade.get_widget('ProgressBar').set_fraction((self._current_task+1)/float(len(self._tasks)))
             current_task = self._tasks[self._current_task]
-            if not current_task['disabled']:
+            if not current_task['disabled'] and hasattr(JolicloudRestoreUtilityBase, '_task_%s' % current_task['task']):
                 self.glade.get_widget('ProgressBar').set_text(current_task['description'])
                 buf = self.glade.get_widget('Details').get_buffer()
                 i = buf.get_end_iter()
