@@ -220,7 +220,7 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
 
 class JolicloudRestoreUtilityText(JolicloudRestoreUtilityBase):
     def update_tasks_list(self, tasks):
-        println('Updating task list')
+        sys.stdout.write('Updating task list...')
         JolicloudRestoreUtilityBase.update_tasks_list(self, tasks)
         for t in tasks:
             t['disabled'] = True
@@ -230,7 +230,7 @@ class JolicloudRestoreUtilityText(JolicloudRestoreUtilityBase):
         self.run_next_task()
 
     def tasks_completed(self):
-        print 'Completed! You need to restart your computer.'
+        println('Completed! You need to restart your computer.')
         reactor.stop()
 
     def run_next_task(self):
@@ -245,10 +245,10 @@ class JolicloudRestoreUtilityText(JolicloudRestoreUtilityBase):
         JolicloudRestoreUtilityBase.run_next_task(self)
 
     def outReceived(self, data):
-        print data
+        sys.stdout.write(data)
 
     def errReceived(self, data):
-        print data
+        sys.stderr.write(data)
 
 class JolicloudRestoreUtilityGtk(JolicloudRestoreUtilityBase):
     running = False
