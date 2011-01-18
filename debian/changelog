@@ -1,3 +1,38 @@
+jolicloud-restore-utility (0.5) robby-1.1; urgency=low
+
+  [ Adam McDaniel ]
+  * Allow JRU to implicity use sudo, no longer requiring it on the
+    command-line.
+  * Add 'apt-get --purge autoremove' as a task to remove unnecessary
+    packages.
+  * Deliver the /etc/sudoers.d/ conffile as a package file, not through
+    postinst.
+  * Remove the unnecessary mods to revert changes to /etc/sudoers: no
+    JRU package was released publicly requires us to undo this
+    particular change
+
+  [ Benjamin Ryzman ]
+  * Simplify some widget names
+  * Add VBox container in order to display task checkboxes
+  * Use execlp to sudo, in order not to fork an additional process
+  * Ignore unknown/disabled tasks
+  * Add user togglable checkboxe for each task
+  * Add topbar cleanup
+  * Only remove 01-restore if it exists, in order to avoid an error
+    message on the CLI
+  * Use SUDO_USER environment variable in order to only clear the
+    current user Application Cache directory
+  * Import DBUS_SESSION_BUS_ADDRESS from user environment in order to
+    use gconftool-2 as the regular user. Reload gnome-panel once done.
+  * Fix Adam's typos
+  * Set user-agent string to "JRU 0.5"
+  * Restart Nickel once the application cache is cleared
+  * Change window size. Use styled textview instead of label
+  * Automatically disable unknown tasks upon update
+  * Make tty output more consistent
+
+ -- Benjamin Ryzman <benjamin@jolicloud.org>  Mon, 17 Jan 2011 12:36:44 +0100
+
 jolicloud-restore-utility (0.4.2) robby-1.1; urgency=low
 
   * Fixed missing attributs bug.
