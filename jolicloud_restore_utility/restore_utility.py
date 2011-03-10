@@ -100,7 +100,7 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
         reactor.spawnProcess(
             self,
             '/usr/bin/apt-get',
-            ['apt-get', '-y', 'clean'], env=None
+            ['apt-get', '-y', '--force-yes', 'clean'], env=None
         )
 
     def _task_clear_nickel_cache(self):
@@ -128,7 +128,7 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
         reactor.spawnProcess(
             self,
             '/usr/bin/apt-get',
-            ['apt-get', '-y', 'update'], env=None
+            ['apt-get', '-y', '--force-yes', 'update'], env=None
         )
 
     def _task_install(self, packages=[]):
@@ -136,7 +136,7 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
             reactor.spawnProcess(
                 self,
                 '/usr/bin/apt-get',
-                ['apt-get', '-y', '-f', 'install'] + map(str, packages), env=None
+                ['apt-get', '-y', '--force-yes', '-f', 'install'] + map(str, packages), env=None
             )
 
     def _task_reinstall(self, packages=[]):
@@ -144,21 +144,21 @@ class JolicloudRestoreUtilityBase(protocol.ProcessProtocol):
             reactor.spawnProcess(
                 self,
                 '/usr/bin/apt-get',
-                ['apt-get', '-y', '-f', '--purge', '--reinstall', 'install'] + map(str, packages), env=None
+                ['apt-get', '-y', '--force-yes', '-f', '--purge', '--reinstall', 'install'] + map(str, packages), env=None
             )
 
     def _task_upgrade(self):
         reactor.spawnProcess(
             self,
             '/usr/bin/apt-get',
-            ['apt-get', '-y', 'dist-upgrade'], env=None
+            ['apt-get', '-y', '--force-yes', 'dist-upgrade'], env=None
         )
 
     def _task_autoremove(self):
         reactor.spawnProcess(
             self,
             '/usr/bin/apt-get',
-            ['apt-get', '-y', '--purge', 'autoremove'], env=None
+            ['apt-get', '-y', '--force-yes', '--purge', 'autoremove'], env=None
         )
 
     def _task_cleanup_topbar(self):
