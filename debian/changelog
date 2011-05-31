@@ -1,3 +1,9 @@
+jolicloud-restore-utility (0.5natty1) natty; urgency=low
+
+  * Rebuild on natty for python 2.7
+
+ -- Adam McDaniel <adam@jolicloud.org>  Tue, 31 May 2011 12:46:05 -0600
+
 jolicloud-restore-utility (0.5) robby-1.1; urgency=low
 
   [ Adam McDaniel ]
